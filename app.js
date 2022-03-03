@@ -4,6 +4,7 @@ const app = express();
 const port = 3000;
 
 const ProductRouter = require("./src/Router/ProductRouter");
+const CustomerRouter = require("./src/Router/CustomerRouter");
 //Khai bao lay tieng viet
 app.use(express.urlencoded({
     extended:true
@@ -24,7 +25,8 @@ app.get("/", (req, res)=>{
         message: "CRUD API"
     })
 });
-app.use("/products", ProductRouter)
+app.use("/products", ProductRouter);
+app.use("/customers", CustomerRouter);
 
 app.listen(port, ()=>{
     console.log(`Example app listening on port ${port}`);
