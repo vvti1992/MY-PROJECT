@@ -6,6 +6,7 @@ const port = 3000;
 const ProductRouter = require("./src/Router/ProductRouter");
 const CustomerRouter = require("./src/Router/CustomerRouter");
 const OrderRouter = require("./src/Router/OrderRouter");
+const OrderDetailRouter = require("./src/Router/OrderDetailRouter");
 //Khai bao lay tieng viet
 app.use(express.urlencoded({
     extended:true
@@ -29,6 +30,7 @@ app.get("/", (req, res)=>{
 app.use("/products", ProductRouter);
 app.use("/customers", CustomerRouter);
 app.use("/orders", OrderRouter);
+app.use("/orderdetails", OrderDetailRouter);
 
 app.listen(port, ()=>{
     console.log(`Example app listening on port ${port}`);
