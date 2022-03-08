@@ -172,7 +172,6 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber !== undefined && skip == undefined) {
-            console.log("limit");
             ProductModel.find(condition)
                 .limit(limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
