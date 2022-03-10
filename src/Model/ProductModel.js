@@ -28,6 +28,11 @@ const productSchema = new Schema({
         required: false,
         default: null
     },
+    brand: {
+        type: String,
+        required: true,
+        default: null
+    },
     timeCreated: {
         type: Date,
         default: Date.now()
