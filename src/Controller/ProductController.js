@@ -27,12 +27,17 @@ function createProduct(req, res) {
         })
     })
 }
+
 function getAllProduct(request, response){
-    ProductModel.find()
+    let limit = 0;
+    limit = request.query.limit;
+    if(limit !== undefined){
+        ProductModel.find()
+        .limit(limit)
         .select("_id name type imageUrl buyPrice promotionPrice description timeCreated timeUpdate")
         .then((ProductList) => {
             return response.status(200).json({
-                message: "Get all succeed.",
+                message: `Get all succeed. Total products: ${ProductList.length}`,
                 products: ProductList
             })
         })
@@ -41,7 +46,24 @@ function getAllProduct(request, response){
                 message: "Fail",
                 error: error.message
             })
+        });
+    } else {
+        ProductModel.find()
+        .select("_id name type imageUrl buyPrice promotionPrice description timeCreated timeUpdate")
+        .then((ProductList) => {
+            return response.status(200).json({
+                message: `Get all succeed. Total products: ${ProductList.length}`,
+                products: ProductList
+            })
         })
+        .catch((error) => {
+            return response.status(500).json({
+                message: "Fail",
+                error: error.message
+            })
+        });
+    }
+    
 }
 function getProductById (request, response) {
     //Get product id

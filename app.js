@@ -1,7 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
+var cors = require('cors');
 const app = express();
-const port = 3000;
+const port = 8000;
 
 const ProductRouter = require("./src/Router/ProductRouter");
 const CustomerRouter = require("./src/Router/CustomerRouter");
@@ -11,6 +12,7 @@ const OrderDetailRouter = require("./src/Router/OrderDetailRouter");
 app.use(express.urlencoded({
     extended:true
 }));
+app.use(cors());
 //khai bao body dang JSON
 app.use(express.json());
 //Connect to mongoDB

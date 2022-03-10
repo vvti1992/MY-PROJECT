@@ -1,12 +1,12 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.3",
     "mongoose": "^6.2.4"
   },
   "name": "devcamp-backend-shop24h",
   "version": "1.0.0",
   "main": "app.js",
-  "devDependencies": {},
   "scripts": {
     "start": "nodemon app.js",
     "debug": "nodemon --inspect app.js",
