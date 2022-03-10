@@ -39,12 +39,9 @@ function getAllProduct(request, response) {
     let vivo = request.query.vivo;
     let xiaomi = request.query.xiaomi;
     let oppo = request.query.oppo;
-    console.log(typeof (minPrice));
-    console.log(minPrice);
-    console.log(maxPrice);
     let limit = request.query.limit;
     let skip = request.query.skip;
-
+    console.log(limit);
     let condition = {}
 
     let brandArray = [];
@@ -84,8 +81,9 @@ function getAllProduct(request, response) {
     }
     const minPriceNumber = parseInt(minPrice);
     const maxPriceNumber = parseInt(maxPrice);
+    const limitNumber = parseInt(limit);
     if (!isNaN(minPriceNumber) && !isNaN(maxPriceNumber) && maxPriceNumber >= minPriceNumber) {
-        if (limit !== undefined && skip !== undefined) {
+        if (limitNumber !== undefined && skip !== undefined) {
             ProductModel.find(condition).find({buyPrice: {$lte: maxPriceNumber, $gte: minPriceNumber}})
                 .limit(limit)
                 .skip(skip * limit)
@@ -103,7 +101,7 @@ function getAllProduct(request, response) {
                     })
                 });
         }
-        if (limit !== undefined && skip == undefined) {
+        if (limitNumber !== undefined && skip == undefined) {
             ProductModel.find(condition).find({buyPrice: {$lte: maxPriceNumber, $gte: minPriceNumber}})
                 .limit(limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
@@ -120,7 +118,7 @@ function getAllProduct(request, response) {
                     })
                 });
         }
-        if (limit == undefined && skip !== undefined) {
+        if (limitNumber == undefined && skip !== undefined) {
             ProductModel.find(condition).find({buyPrice: {$lte: maxPriceNumber, $gte: minPriceNumber}})
                 .skip(skip)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
@@ -137,7 +135,7 @@ function getAllProduct(request, response) {
                     })
                 });
         }
-        if (limit == undefined && skip == undefined) {
+        if (limitNumber == undefined && skip == undefined) {
             ProductModel.find(condition).find({buyPrice: {$lte: maxPriceNumber, $gte: minPriceNumber}})
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .then((ProductList) => {
@@ -155,7 +153,7 @@ function getAllProduct(request, response) {
         }
     } else {
         
-		if (limit !== undefined && skip !== undefined) {
+		if (limitNumber !== undefined && skip !== undefined) {
             ProductModel.find(condition)
                 .limit(limit)
                 .skip(skip * limit)
@@ -173,8 +171,8 @@ function getAllProduct(request, response) {
                     })
                 });
         }
-        if (limit !== undefined && skip == undefined) {
-            ProductModel.find({buyPrice: {$lte: parseInt(maxPrice), $gte: parseInt(minPrice)}})
+        if (limitNumber !== undefined && skip == undefined) {
+            ProductModel.find(condition)
                 .limit(limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .then((ProductList) => {
@@ -190,7 +188,7 @@ function getAllProduct(request, response) {
                     })
                 });
         }
-        if (limit == undefined && skip !== undefined) {
+        if (limitNumber == undefined && skip !== undefined) {
             ProductModel.find(condition)
                 .skip(skip)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
@@ -207,7 +205,7 @@ function getAllProduct(request, response) {
                     })
                 });
         }
-        if (limit == undefined && skip == undefined) {
+        if (limitNumber == undefined && skip == undefined) {
             ProductModel.find(condition)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .then((ProductList) => {
