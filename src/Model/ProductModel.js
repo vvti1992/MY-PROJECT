@@ -30,8 +30,7 @@ const productSchema = new Schema({
     },
     brand: {
         type: String,
-        required: true,
-        default: null
+        required: true
     },
     timeCreated: {
         type: Date,

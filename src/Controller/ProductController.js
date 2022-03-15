@@ -229,7 +229,7 @@ function getProductById(request, response) {
     //check product id is valid?
     if (mongoose.Types.ObjectId.isValid(id)) {
         ProductModel.findById(id)
-            .select("_id name type imageUrl buyPrice promotionPrice description timeCreated timeUpdate")
+            .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
             .then((data) => {
                 if (data) {
                     return response.status(200).json({
