@@ -9,23 +9,33 @@ const customerSchema = new Schema({
     },
     phoneNumber: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     address: {
         type: String,
         required: false
     },
-    city: {
+    password: {
         type: String,
         required: true
     },
+    city: {
+        type: String,
+        default: null
+    },
+    photoURL: {
+        type: String,
+        default: null
+    },
     country: {
         type: String,
-        required: true
+        default: null
     },
     timeCreated: {
         type: Date,

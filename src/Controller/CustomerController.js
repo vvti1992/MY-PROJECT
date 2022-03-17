@@ -7,8 +7,10 @@ function createCustomer(req, res) {
         fullName: req.body.fullName,
         phoneNumber: req.body.phoneNumber,
         email: req.body.email,
+        password: req.body.password,
         address: req.body.address,
         city: req.body.city,
+        photoURL: req.body.photoURL,
         country: req.body.country,
         timeCreated: req.body.timeCreate,
         timeUpdate: req.body.timeUpdate
@@ -28,13 +30,23 @@ function createCustomer(req, res) {
     })
 }
 function getAllCustomer(request, response){
-    CustomerModel.find()
-        .select("_id fullName phoneNumber email address city country timeCreated timeUpdate")
+    const email = request.query.email;
+    if(email!==null && email !== undefined)
+    CustomerModel.find({email:email})
+        .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
         .then((CustomerList) => {
-            return response.status(200).json({
-                message: "Get all succeed.",
-                Customers: CustomerList
-            })
+            if(CustomerList) {
+                return response.status(200).json({
+                    message: "Get all succeed.",
+                    Customers: CustomerList
+                })
+            }
+            else {
+                return response.status(404).json({
+                    message: "Fail",
+                    error: "Not Found"
+                })
+            }
         })
         .catch((error) => {
             return response.status(500).json({
@@ -42,6 +54,29 @@ function getAllCustomer(request, response){
                 error: error.message
             })
         })
+        else
+        CustomerModel.find()
+        .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
+        .then((CustomerList) => {
+            if(CustomerList) {
+                return response.status(200).json({
+                    message: "Get all succeed.",
+                    Customers: CustomerList
+                })
+            }
+            else {
+                return response.status(404).json({
+                    message: "Fail",
+                    error: "Not Found"
+                })
+            }
+        })
+        .catch((error) => {
+            return response.status(500).json({
+                message: "Fail",
+                error: error.message
+            })
+        })    
 }
 function getCustomerById (request, response) {
     //Get customer id
@@ -49,7 +84,7 @@ function getCustomerById (request, response) {
     //check customer id is valid?
     if(mongoose.Types.ObjectId.isValid(id)) {
         CustomerModel.findById(id)
-        .select("_id fullName phoneNumber email address city country timeCreated timeUpdate")
+        .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
         .then((data) => {
             if(data) {
                 return response.status(200).json({
