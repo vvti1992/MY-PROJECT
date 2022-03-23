@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {CustomerModel} = require('../Model/CustomerModel');
+const { CustomerModel } = require('../Model/CustomerModel');
 
 function createCustomer(req, res) {
     const customer = new CustomerModel({
@@ -16,96 +16,114 @@ function createCustomer(req, res) {
         timeUpdate: req.body.timeUpdate
     });
     customer.save()
-    .then((newcustomer)=>{
-        return res.status(200).json({
-            message: "Create new customer successfully.",
-            customer: newcustomer
+        .then((newcustomer) => {
+            return res.status(200).json({
+                message: "Create new customer successfully.",
+                customer: newcustomer
+            })
         })
-    })
-    .catch((error)=>{
-        return res.status(500).json({
-            message: "Fail",
-            error: error.message
+        .catch((error) => {
+            return res.status(500).json({
+                message: "Fail",
+                error: error.message
+            })
         })
-    })
 }
-function getAllCustomer(request, response){
+function getAllCustomer(request, response) {
     const email = request.query.email;
-    if(email!==null && email !== undefined)
-    CustomerModel.find()
-        .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
-        .sort({timeUpdate: -1})
-        .then((CustomerList) => {
-            if(CustomerList) {
-                return response.status(200).json({
-                    message: "Get all succeed.",
-                    Customers: CustomerList
-                })
-            }
-            else {
-                return response.status(404).json({
-                    message: "Fail",
-                    error: "Not Found"
-                })
-            }
-        })
-        .catch((error) => {
-            return response.status(500).json({
-                message: "Fail",
-                error: error.message
+    const keysearch = request.query.keysearch;
+    const valuesearch = request.query.valuesearch;
+    var query = null;
+    if (keysearch == 10) {
+        query = {"fullName":{ $regex : new RegExp(valuesearch, "i") }};
+
+    }
+    if (keysearch == 20) {
+        query = {"phoneNumber":{ $regex : new RegExp(valuesearch, "i") }};
+
+    }
+    if (keysearch == 30) {
+        query = {"email":{ $regex : new RegExp(valuesearch, "i") }};
+
+    }
+    if (keysearch == undefined){
+        query={};
+    }
+    if (email !== null && email !== undefined)
+        CustomerModel.find(query)
+            .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
+            .sort({ timeUpdate: -1 })
+            .then((CustomerList) => {
+                if (CustomerList) {
+                    return response.status(200).json({
+                        message: "Get all succeed.",
+                        Customers: CustomerList
+                    })
+                }
+                else {
+                    return response.status(404).json({
+                        message: "Fail",
+                        error: "Not Found"
+                    })
+                }
             })
-        })
-        else
-        CustomerModel.find()
-        .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
-        .then((CustomerList) => {
-            if(CustomerList) {
-                return response.status(200).json({
-                    message: "Get all succeed.",
-                    Customers: CustomerList
-                })
-            }
-            else {
-                return response.status(404).json({
+            .catch((error) => {
+                return response.status(500).json({
                     message: "Fail",
-                    error: "Not Found"
+                    error: error.message
                 })
-            }
-        })
-        .catch((error) => {
-            return response.status(500).json({
-                message: "Fail",
-                error: error.message
             })
-        })    
+    else
+        CustomerModel.find(query)
+            .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
+            .then((CustomerList) => {
+                if (CustomerList) {
+                    return response.status(200).json({
+                        message: "Get all succeed.",
+                        Customers: CustomerList
+                    })
+                }
+                else {
+                    return response.status(404).json({
+                        message: "Fail",
+                        error: "Not Found"
+                    })
+                }
+            })
+            .catch((error) => {
+                return response.status(500).json({
+                    message: "Fail",
+                    error: error.message
+                })
+            })
 }
-function getCustomerById (request, response) {
+function getCustomerById(request, response) {
     //Get customer id
     const id = request.params.customerId;
     //check customer id is valid?
-    if(mongoose.Types.ObjectId.isValid(id)) {
+    if (mongoose.Types.ObjectId.isValid(id)) {
         CustomerModel.findById(id)
-        .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
-        .then((data) => {
-            if(data) {
-                return response.status(200).json({
-                    message: `Get customer with id: ${id} succeed.`,
-                    Customer: data
-                })
-            }
-            else {
-                return response.status(404).json({
-                    message: "Fail",
-                    error: "Not Found"
-                })
-            }
-        })
-        .catch((error) => {
-            return response.status(500).json({
-                message: "Fail",
-                error: error.message
+            .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
+            .then((data) => {
+                if (data) {
+                    return response.status(200).json({
+                        message: `Get customer with id: ${id} succeed.`,
+                        Customer: data
+                    })
+                }
+                else {
+                    return response.status(404).json({
+                        message: "Fail",
+                        error: "Not Found"
+                    })
+                }
             })
-        })
+            .catch((error) => {
+                return response.status(500).json({
+                    message: "Fail",
+                    error: error.message
+                })
+            })
     } else {
         return response.status(400).json({
             message: "Fail",
@@ -116,20 +134,20 @@ function getCustomerById (request, response) {
 function updateCustomer(request, response) {
     const id = request.params.customerId;
     const updateObject = request.body;
-    if(mongoose.Types.ObjectId.isValid(id)){
+    if (mongoose.Types.ObjectId.isValid(id)) {
         CustomerModel.findByIdAndUpdate(id, updateObject)
-        .then((data) =>{
-            return response.status(200).json({
-                message: `Update customer with id: ${id} succeed`,
-                updateObject: data
+            .then((data) => {
+                return response.status(200).json({
+                    message: `Update customer with id: ${id} succeed`,
+                    updateObject: data
+                })
             })
-        })
-        .catch((error) => {
-            return response.status(500).json({
-                message: "Update Failure",
-                error: error.message
+            .catch((error) => {
+                return response.status(500).json({
+                    message: "Update Failure",
+                    error: error.message
+                })
             })
-        })
     } else {
         return response.status(400).json({
             message: "Update Failure",
@@ -137,22 +155,22 @@ function updateCustomer(request, response) {
         })
     }
 }
-function deleteCustomer (request, response) {
+function deleteCustomer(request, response) {
     const id = request.params.customerId;
-    if(mongoose.Types.ObjectId.isValid(id)){
+    if (mongoose.Types.ObjectId.isValid(id)) {
         CustomerModel.findByIdAndDelete(id)
-        .then((data) =>{
-            return response.status(200).json({
-                message: "Delete customer succeed",
-                deleteObject: data
+            .then((data) => {
+                return response.status(200).json({
+                    message: "Delete customer succeed",
+                    deleteObject: data
+                })
             })
-        })
-        .catch((error) => {
-            return response.status(500).json({
-                message: "Delete Failure",
-                error: error.message
+            .catch((error) => {
+                return response.status(500).json({
+                    message: "Delete Failure",
+                    error: error.message
+                })
             })
-        })
     } else {
         return response.status(400).json({
             message: "Fail",
@@ -160,4 +178,4 @@ function deleteCustomer (request, response) {
         })
     }
 }
-module.exports = {createCustomer, getAllCustomer, getCustomerById, updateCustomer, deleteCustomer};
+module.exports = { createCustomer, getAllCustomer, getCustomerById, updateCustomer, deleteCustomer };

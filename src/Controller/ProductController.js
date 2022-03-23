@@ -41,6 +41,8 @@ function getAllProduct(request, response) {
     let oppo = request.query.oppo;
     let limit = request.query.limit;
     let skip = request.query.skip;
+    let keysearch = request.query.keysearch;
+    let valuesearch = request.query.valuesearch;
     let condition = {}
 
     let brandArray = [];
@@ -78,13 +80,28 @@ function getAllProduct(request, response) {
             $in: typeArray
         }
     }
+    var query = null;
+    if (keysearch == 10) {
+        query = {"name":{ $regex : new RegExp(valuesearch, "i") }};
 
+    }
+    if (keysearch == 20) {
+        query = {"type":{ $regex : new RegExp(valuesearch, "i") }};
+
+    }
+    if (keysearch == 30) {
+        query = {"brand":{ $regex : new RegExp(valuesearch, "i") }};
+
+    }
+    if (keysearch == undefined){
+        query={};
+    }
     const minPriceNumber = parseInt(minPrice);
     const maxPriceNumber = parseInt(maxPrice);
     const limitNumber = parseInt(limit);
     if (!isNaN(minPriceNumber) && !isNaN(maxPriceNumber) && maxPriceNumber >= minPriceNumber) {
         if (limitNumber !== undefined && skip !== undefined) {
-            ProductModel.find(condition).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
+            ProductModel.find({$and: [condition, query]}).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
                 .limit(limit)
                 .skip(skip * limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
@@ -103,7 +120,8 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber !== undefined && skip == undefined) {
-            ProductModel.find(condition).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
+            ProductModel.find({$and: [condition, query]}).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
+            .find(query)
                 .limit(limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .sort({ timeUpdate: -1 })
@@ -121,7 +139,8 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber == undefined && skip !== undefined) {
-            ProductModel.find(condition).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
+            ProductModel.find({$and: [condition, query]}).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
+            .find(query)
                 .skip(skip)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .sort({ timeUpdate: -1 })
@@ -139,7 +158,8 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber == undefined && skip == undefined) {
-            ProductModel.find(condition).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
+            ProductModel.find({$and: [condition, query]}).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
+            .find(query)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
@@ -158,7 +178,8 @@ function getAllProduct(request, response) {
     } else {
 
         if (limitNumber !== undefined && skip !== undefined) {
-            ProductModel.find(condition)
+            ProductModel.find({$and: [condition, query]})
+            .find(query)
                 .limit(limit)
                 .skip(skip * limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
@@ -177,7 +198,8 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber !== undefined && skip == undefined) {
-            ProductModel.find(condition)
+            ProductModel.find({$and: [condition, query]})
+            .find(query)
                 .limit(limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .sort({ timeUpdate: -1 })
@@ -195,7 +217,8 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber == undefined && skip !== undefined) {
-            ProductModel.find(condition)
+            ProductModel.find({$and: [condition, query]})
+            .find(query)
                 .skip(skip)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .sort({ timeUpdate: -1 })
@@ -213,7 +236,8 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber == undefined && skip == undefined) {
-            ProductModel.find(condition)
+            ProductModel.find({$and: [condition, query]})
+            .find(query)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
                 .sort({ timeUpdate: -1 })
                 .then((ProductList) => {

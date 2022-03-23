@@ -42,9 +42,24 @@ function createOrder(req, res) {
 function getAllOrder(req, res) {
     const startDate = req.query.startdate;
     const endDate = req.query.enddate;
+    const keysearch = req.query.keysearch;
+    const valuesearch = req.query.valuesearch;
+    var query = null;
+    if (keysearch == 10) {
+        query = {"_id":{ $regex : new RegExp(valuesearch, "i") }};
+    }
+    if (keysearch == 20) {
+        query = {"status": valuesearch};
+    }
+    if (keysearch == 30) {
+        query = {"customer":{ $regex : new RegExp(valuesearch, "i") }};
+    }
+    if (keysearch == undefined){
+        query={};
+    }
     if(startDate === undefined || startDate === "" || endDate === undefined || endDate === "")
     {
-        OrderModel.find()
+        OrderModel.find(query)
         .select('_id status note createDate updateDate shippedDate customer')
         .sort({updateDate: -1})
         .then((allOrder) => {
@@ -63,6 +78,7 @@ function getAllOrder(req, res) {
         });
     } else {
         OrderModel.find({"updateDate": {"$lte": endDate + "T23:59:00", "$gte": startDate}})
+        .find(query)
         .select('_id status note createDate updateDate shippedDate customer')
         .sort({updateDate: -1})
         .then((allOrder) => {
