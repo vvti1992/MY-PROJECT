@@ -6,7 +6,7 @@ const { OrderModel } = require('../model/OrderModel');
 
 // Create Order
 function createOrder(req, res) {
-     // Khởi tạo một đối tượng OrderModel  mới truyền các tham số tương ứng từ request body vào
+    // Khởi tạo một đối tượng OrderModel  mới truyền các tham số tương ứng từ request body vào
     const order = new OrderModel({
         _id: mongoose.Types.ObjectId(),
         orderDate: req.body.orderDate,
@@ -40,8 +40,13 @@ function createOrder(req, res) {
 
 // Get all order
 function getAllOrder(req, res) {
-    OrderModel.find()
-        .select('_id orderCode pizzaSize pizzaType voucher status createDate')
+    const startDate = req.query.startdate;
+    const endDate = req.query.enddate;
+    if(startDate === undefined || startDate === "" || endDate === undefined || endDate === "")
+    {
+        OrderModel.find()
+        .select('_id status note createDate updateDate shippedDate customer')
+        .sort({updateDate: -1})
         .then((allOrder) => {
             return res.status(200).json({
                 success: true,
@@ -56,6 +61,27 @@ function getAllOrder(req, res) {
                 error: err.message,
             });
         });
+    } else {
+        OrderModel.find({"updateDate": {"$lte": endDate + "T23:59:00", "$gte": startDate}})
+        .select('_id status note createDate updateDate shippedDate customer')
+        .sort({updateDate: -1})
+        .then((allOrder) => {
+            return res.status(200).json({
+                success: true,
+                message: 'A list of all order',
+                Order: allOrder,
+            });
+        })
+        .catch((err) => {
+            res.status(500).json({
+                success: false,
+                message: 'Server error. Please try again.',
+                error: err.message,
+            });
+        });
+    }
+    
+
 }
 
 // Get single Order
@@ -63,8 +89,9 @@ function getSingleOrder(req, res) {
     const id = req.params.orderId;
 
     OrderModel.findById(id)
+        .select('_id status note createDate updateDate shippedDate customer')
         .then((singleOrder) => {
-            if(singleOrder){
+            if (singleOrder) {
                 return res.status(200).json({
                     success: true,
                     message: `Get data on Order`,
@@ -85,6 +112,7 @@ function getSingleOrder(req, res) {
             });
         });
 }
+
 
 // update order
 function updateOrder(req, res) {

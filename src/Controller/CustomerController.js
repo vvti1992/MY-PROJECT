@@ -32,8 +32,9 @@ function createCustomer(req, res) {
 function getAllCustomer(request, response){
     const email = request.query.email;
     if(email!==null && email !== undefined)
-    CustomerModel.find({email:email})
+    CustomerModel.find()
         .select("_id fullName phoneNumber email password address city photoURL country timeCreated timeUpdate")
+        .sort({timeUpdate: -1})
         .then((CustomerList) => {
             if(CustomerList) {
                 return response.status(200).json({

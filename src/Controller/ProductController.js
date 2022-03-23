@@ -41,7 +41,6 @@ function getAllProduct(request, response) {
     let oppo = request.query.oppo;
     let limit = request.query.limit;
     let skip = request.query.skip;
-    console.log(limit);
     let condition = {}
 
     let brandArray = [];
@@ -79,15 +78,17 @@ function getAllProduct(request, response) {
             $in: typeArray
         }
     }
+
     const minPriceNumber = parseInt(minPrice);
     const maxPriceNumber = parseInt(maxPrice);
     const limitNumber = parseInt(limit);
     if (!isNaN(minPriceNumber) && !isNaN(maxPriceNumber) && maxPriceNumber >= minPriceNumber) {
         if (limitNumber !== undefined && skip !== undefined) {
-            ProductModel.find(condition).find({buyPrice: {$lte: maxPriceNumber, $gte: minPriceNumber}})
+            ProductModel.find(condition).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
                 .limit(limit)
                 .skip(skip * limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+                .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
                     return response.status(200).json({
                         message: `Get all succeed. Total products: ${ProductList.length}`,
@@ -102,9 +103,10 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber !== undefined && skip == undefined) {
-            ProductModel.find(condition).find({buyPrice: {$lte: maxPriceNumber, $gte: minPriceNumber}})
+            ProductModel.find(condition).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
                 .limit(limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+                .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
                     return response.status(200).json({
                         message: `Get all succeed. Total products: ${ProductList.length}`,
@@ -119,9 +121,10 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber == undefined && skip !== undefined) {
-            ProductModel.find(condition).find({buyPrice: {$lte: maxPriceNumber, $gte: minPriceNumber}})
+            ProductModel.find(condition).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
                 .skip(skip)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+                .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
                     return response.status(200).json({
                         message: `Get all succeed. Total products: ${ProductList.length}`,
@@ -136,8 +139,9 @@ function getAllProduct(request, response) {
                 });
         }
         if (limitNumber == undefined && skip == undefined) {
-            ProductModel.find(condition).find({buyPrice: {$lte: maxPriceNumber, $gte: minPriceNumber}})
+            ProductModel.find(condition).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+                .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
                     return response.status(200).json({
                         message: `Get all succeed. Total products: ${ProductList.length}`,
@@ -152,12 +156,13 @@ function getAllProduct(request, response) {
                 });
         }
     } else {
-        
-		if (limitNumber !== undefined && skip !== undefined) {
+
+        if (limitNumber !== undefined && skip !== undefined) {
             ProductModel.find(condition)
                 .limit(limit)
                 .skip(skip * limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+                .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
                     return response.status(200).json({
                         message: `Get all succeed. Total products: ${ProductList.length}`,
@@ -175,6 +180,7 @@ function getAllProduct(request, response) {
             ProductModel.find(condition)
                 .limit(limit)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+                .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
                     return response.status(200).json({
                         message: `Get all succeed. Total products: ${ProductList.length}`,
@@ -192,6 +198,7 @@ function getAllProduct(request, response) {
             ProductModel.find(condition)
                 .skip(skip)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+                .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
                     return response.status(200).json({
                         message: `Get all succeed. Total products: ${ProductList.length}`,
@@ -208,6 +215,7 @@ function getAllProduct(request, response) {
         if (limitNumber == undefined && skip == undefined) {
             ProductModel.find(condition)
                 .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+                .sort({ timeUpdate: -1 })
                 .then((ProductList) => {
                     return response.status(200).json({
                         message: `Get all succeed. Total products: ${ProductList.length}`,
@@ -220,7 +228,7 @@ function getAllProduct(request, response) {
                         error: error.message
                     })
                 });
-        } 
+        }
     }
 }
 function getProductById(request, response) {
