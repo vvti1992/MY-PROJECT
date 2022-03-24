@@ -54,7 +54,7 @@ function getAllOrder(req, res) {
     if (keysearch == 30) {
         query = {"customer":{ $regex : new RegExp(valuesearch, "i") }};
     }
-    if (keysearch == undefined){
+    if (keysearch == undefined || keysearch == 0){
         query={};
     }
     if(startDate === undefined || startDate === "" || endDate === undefined || endDate === "")

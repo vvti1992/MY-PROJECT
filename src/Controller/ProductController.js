@@ -93,7 +93,7 @@ function getAllProduct(request, response) {
         query = {"brand":{ $regex : new RegExp(valuesearch, "i") }};
 
     }
-    if (keysearch == undefined){
+    if (keysearch == undefined || keysearch == 0){
         query={};
     }
     const minPriceNumber = parseInt(minPrice);

@@ -46,7 +46,7 @@ function getAllCustomer(request, response) {
         query = {"email":{ $regex : new RegExp(valuesearch, "i") }};
 
     }
-    if (keysearch == undefined){
+    if (keysearch == undefined || keysearch == 0){
         query={};
     }
     if (email !== null && email !== undefined)
