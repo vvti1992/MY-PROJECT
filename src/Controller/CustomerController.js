@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { CustomerModel } = require('../Model/CustomerModel');
 
 function createCustomer(req, res) {
+
     const customer = new CustomerModel({
         _id: mongoose.Types.ObjectId(),
         fullName: req.body.fullName,
@@ -35,19 +36,19 @@ function getAllCustomer(request, response) {
     const valuesearch = request.query.valuesearch;
     var query = null;
     if (keysearch == 10) {
-        query = {"fullName":{ $regex : new RegExp(valuesearch, "i") }};
+        query = { "fullName": { $regex: new RegExp(valuesearch, "i") } };
 
     }
     if (keysearch == 20) {
-        query = {"phoneNumber":{ $regex : new RegExp(valuesearch, "i") }};
+        query = { "phoneNumber": { $regex: new RegExp(valuesearch, "i") } };
 
     }
     if (keysearch == 30) {
-        query = {"email":{ $regex : new RegExp(valuesearch, "i") }};
+        query = { "email": { $regex: new RegExp(valuesearch, "i") } };
 
     }
-    if (keysearch == undefined || keysearch == 0){
-        query={};
+    if (keysearch == undefined || keysearch == 0) {
+        query = {};
     }
     if (email !== null && email !== undefined)
         CustomerModel.find(query)

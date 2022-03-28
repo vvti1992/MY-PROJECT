@@ -82,178 +82,113 @@ function getAllProduct(request, response) {
     }
     var query = null;
     if (keysearch == 10) {
-        query = {"name":{ $regex : new RegExp(valuesearch, "i") }};
+        query = { "name": { $regex: new RegExp(valuesearch, "i") } };
 
     }
     if (keysearch == 20) {
-        query = {"type":{ $regex : new RegExp(valuesearch, "i") }};
+        query = { "type": { $regex: new RegExp(valuesearch, "i") } };
 
     }
     if (keysearch == 30) {
-        query = {"brand":{ $regex : new RegExp(valuesearch, "i") }};
+        query = { "brand": { $regex: new RegExp(valuesearch, "i") } };
 
     }
-    if (keysearch == undefined || keysearch == 0){
-        query={};
+    if (keysearch == undefined || keysearch == 0) {
+        query = {};
     }
-    const minPriceNumber = parseInt(minPrice);
-    const maxPriceNumber = parseInt(maxPrice);
+    var queryPrice = null;
+    var minPriceNumber, maxPriceNumber;
+    if (isNaN(parseInt(maxPrice)) && !isNaN(parseInt(minPrice))) {
+        minPriceNumber = parseInt(minPrice);
+        queryPrice = { promotionPrice: { $gte: minPriceNumber } };
+    }
+    if (!isNaN(parseInt(maxPrice)) && isNaN(parseInt(minPrice))) {
+        maxPriceNumber = parseInt(maxPrice);
+        queryPrice = { promotionPrice: { $lte: maxPriceNumber } };
+    }
+    if (!isNaN(parseInt(maxPrice)) && !isNaN(parseInt(minPrice))) {
+        queryPrice = { promotionPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } }
+    }
+    if (isNaN(parseInt(maxPrice)) && isNaN(parseInt(minPrice))) {
+        queryPrice = {}
+    }
     const limitNumber = parseInt(limit);
-    if (!isNaN(minPriceNumber) && !isNaN(maxPriceNumber) && maxPriceNumber >= minPriceNumber) {
-        if (limitNumber !== undefined && skip !== undefined) {
-            ProductModel.find({$and: [condition, query]}).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
-                .limit(limit)
-                .skip(skip * limit)
-                .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
-                .sort({ timeUpdate: -1 })
-                .then((ProductList) => {
-                    return response.status(200).json({
-                        message: `Get all succeed. Total products: ${ProductList.length}`,
-                        products: ProductList
-                    })
+    if (limitNumber !== undefined && skip !== undefined) {
+        ProductModel.find({ $and: [condition, query] }).find(queryPrice)
+            .limit(limit)
+            .skip(skip * limit)
+            .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+            .sort({ timeUpdate: -1 })
+            .then((ProductList) => {
+                return response.status(200).json({
+                    message: `Get all succeed. Total products: ${ProductList.length}`,
+                    products: ProductList
                 })
-                .catch((error) => {
-                    return response.status(500).json({
-                        message: "Fail",
-                        error: error.message
-                    })
-                });
-        }
-        if (limitNumber !== undefined && skip == undefined) {
-            ProductModel.find({$and: [condition, query]}).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
-            .find(query)
-                .limit(limit)
-                .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
-                .sort({ timeUpdate: -1 })
-                .then((ProductList) => {
-                    return response.status(200).json({
-                        message: `Get all succeed. Total products: ${ProductList.length}`,
-                        products: ProductList
-                    })
+            })
+            .catch((error) => {
+                return response.status(500).json({
+                    message: "Fail",
+                    error: error.message
                 })
-                .catch((error) => {
-                    return response.status(500).json({
-                        message: "Fail",
-                        error: error.message
-                    })
-                });
-        }
-        if (limitNumber == undefined && skip !== undefined) {
-            ProductModel.find({$and: [condition, query]}).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
-            .find(query)
-                .skip(skip)
-                .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
-                .sort({ timeUpdate: -1 })
-                .then((ProductList) => {
-                    return response.status(200).json({
-                        message: `Get all succeed. Total products: ${ProductList.length}`,
-                        products: ProductList
-                    })
-                })
-                .catch((error) => {
-                    return response.status(500).json({
-                        message: "Fail",
-                        error: error.message
-                    })
-                });
-        }
-        if (limitNumber == undefined && skip == undefined) {
-            ProductModel.find({$and: [condition, query]}).find({ buyPrice: { $lte: maxPriceNumber, $gte: minPriceNumber } })
-            .find(query)
-                .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
-                .sort({ timeUpdate: -1 })
-                .then((ProductList) => {
-                    return response.status(200).json({
-                        message: `Get all succeed. Total products: ${ProductList.length}`,
-                        products: ProductList
-                    })
-                })
-                .catch((error) => {
-                    return response.status(500).json({
-                        message: "Fail",
-                        error: error.message
-                    })
-                });
-        }
-    } else {
-
-        if (limitNumber !== undefined && skip !== undefined) {
-            ProductModel.find({$and: [condition, query]})
-            .find(query)
-                .limit(limit)
-                .skip(skip * limit)
-                .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
-                .sort({ timeUpdate: -1 })
-                .then((ProductList) => {
-                    return response.status(200).json({
-                        message: `Get all succeed. Total products: ${ProductList.length}`,
-                        products: ProductList
-                    })
-                })
-                .catch((error) => {
-                    return response.status(500).json({
-                        message: "Fail",
-                        error: error.message
-                    })
-                });
-        }
-        if (limitNumber !== undefined && skip == undefined) {
-            ProductModel.find({$and: [condition, query]})
-            .find(query)
-                .limit(limit)
-                .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
-                .sort({ timeUpdate: -1 })
-                .then((ProductList) => {
-                    return response.status(200).json({
-                        message: `Get all succeed. Total products: ${ProductList.length}`,
-                        products: ProductList
-                    })
-                })
-                .catch((error) => {
-                    return response.status(500).json({
-                        message: "Fail",
-                        error: error.message
-                    })
-                });
-        }
-        if (limitNumber == undefined && skip !== undefined) {
-            ProductModel.find({$and: [condition, query]})
-            .find(query)
-                .skip(skip)
-                .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
-                .sort({ timeUpdate: -1 })
-                .then((ProductList) => {
-                    return response.status(200).json({
-                        message: `Get all succeed. Total products: ${ProductList.length}`,
-                        products: ProductList
-                    })
-                })
-                .catch((error) => {
-                    return response.status(500).json({
-                        message: "Fail",
-                        error: error.message
-                    })
-                });
-        }
-        if (limitNumber == undefined && skip == undefined) {
-            ProductModel.find({$and: [condition, query]})
-            .find(query)
-                .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
-                .sort({ timeUpdate: -1 })
-                .then((ProductList) => {
-                    return response.status(200).json({
-                        message: `Get all succeed. Total products: ${ProductList.length}`,
-                        products: ProductList
-                    })
-                })
-                .catch((error) => {
-                    return response.status(500).json({
-                        message: "Fail",
-                        error: error.message
-                    })
-                });
-        }
+            });
     }
+    if (limitNumber !== undefined && skip == undefined) {
+        ProductModel.find({ $and: [condition, query] }).find(queryPrice)
+            .find(query)
+            .limit(limit)
+            .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+            .sort({ timeUpdate: -1 })
+            .then((ProductList) => {
+                return response.status(200).json({
+                    message: `Get all succeed. Total products: ${ProductList.length}`,
+                    products: ProductList
+                })
+            })
+            .catch((error) => {
+                return response.status(500).json({
+                    message: "Fail",
+                    error: error.message
+                })
+            });
+    }
+    if (limitNumber == undefined && skip !== undefined) {
+        ProductModel.find({ $and: [condition, query] }).find(queryPrice)
+            .find(query)
+            .skip(skip)
+            .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+            .sort({ timeUpdate: -1 })
+            .then((ProductList) => {
+                return response.status(200).json({
+                    message: `Get all succeed. Total products: ${ProductList.length}`,
+                    products: ProductList
+                })
+            })
+            .catch((error) => {
+                return response.status(500).json({
+                    message: "Fail",
+                    error: error.message
+                })
+            });
+    }
+    if (limitNumber == undefined && skip == undefined) {
+        ProductModel.find({ $and: [condition, query] }).find(queryPrice)
+            .find(query)
+            .select("_id name type imageUrl buyPrice promotionPrice description brand timeCreated timeUpdate")
+            .sort({ timeUpdate: -1 })
+            .then((ProductList) => {
+                return response.status(200).json({
+                    message: `Get all succeed. Total products: ${ProductList.length}`,
+                    products: ProductList
+                })
+            })
+            .catch((error) => {
+                return response.status(500).json({
+                    message: "Fail",
+                    error: error.message
+                })
+            });
+    }
+
 }
 function getProductById(request, response) {
     //Get product id
