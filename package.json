@@ -22,5 +22,8 @@
     "url": "https://gitlab.com/devcamp120.j2110/tivv/buoi22/devcamp-backend-shop24h/issues"
   },
   "homepage": "https://gitlab.com/devcamp120.j2110/tivv/buoi22/devcamp-backend-shop24h#readme",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
 }
